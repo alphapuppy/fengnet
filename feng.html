@@ -935,7 +935,7 @@
                 });
 
                 // 终点
-                if (this.distance > config.levelLength - 100 && !this.married) {
+                if (this.distance > config.levelLength - 100) {
                     // 根据画面大小自适应终点位置
                     let endX = this.displayWidth - (this.distance - (config.levelLength - 100)) * 10;
                     
@@ -960,12 +960,8 @@
                             this.player.x + this.player.width > castleX &&
                             this.player.y < castleY + targetHeight &&
                             this.player.y + this.player.height > castleY) {
-                            // 触发结婚场景
-                            this.married = true;
-                            // 延迟一点再触发胜利，让marry2.png先显示
-                            setTimeout(() => {
-                                this.win();
-                            }, 500);
+                            // 直接触发胜利，进入结算画面
+                            this.win();
                         }
                     } else {
                         // 如果图片还没加载好，就退回到原来的 emoji 方案（城堡 + 公主）
@@ -978,29 +974,10 @@
                         
                         // emoji模式的碰撞检测
                         if (endX < this.player.x) {
-                            this.married = true;
-                            setTimeout(() => {
-                                this.win();
-                            }, 500);
+                            // 直接触发胜利，进入结算画面
+                            this.win();
                         }
                     }
-                }
-                
-                // 如果已触发结婚场景，显示marry2.png（居中显示，覆盖整个画面）
-                if (this.married && this.marryImageLoaded) {
-                    const marryHeight = this.displayHeight * 0.6; // 结婚图片占画面高度的60%
-                    const aspectRatio = this.marryImage.width / this.marryImage.height || 1;
-                    const marryWidth = marryHeight * aspectRatio;
-                    const marryX = (this.displayWidth - marryWidth) / 2; // 居中
-                    const marryY = (this.displayHeight - marryHeight) / 2; // 居中
-                    
-                    this.ctx.drawImage(
-                        this.marryImage,
-                        marryX,
-                        marryY,
-                        marryWidth,
-                        marryHeight
-                    );
                 }
 
                 // 子弹
@@ -1010,9 +987,7 @@
                 });
 
                 // --- 玩家绘制区域 ---
-                // 如果已触发结婚场景，不绘制玩家
-                if (!this.married) {
-                    this.ctx.save();
+                this.ctx.save();
                     
                     // 绘制玩家本体 - 使用图片
                     if (this.playerImageLoaded) {
@@ -1073,17 +1048,14 @@
                     this.ctx.fillText(playerSprite, -this.player.width / 2, drawY);
                 }
 
-                    this.ctx.restore(); // 结束玩家绘制
-                } // 结束 if (!this.married)
+                this.ctx.restore(); // 结束玩家绘制
 
-                // 名字标签（只在未结婚时显示）
-                if (!this.married) {
-                    this.ctx.fillStyle = '#0ff';
-                    this.ctx.font = '20px "Orbitron"';
-                    this.ctx.shadowBlur = 0;
-                    this.ctx.shadowColor = 'transparent';
-                    this.ctx.fillText('WWF', this.player.x + 10, this.player.y - 15);
-                }
+                // 名字标签
+                this.ctx.fillStyle = '#0ff';
+                this.ctx.font = '20px "Orbitron"';
+                this.ctx.shadowBlur = 0;
+                this.ctx.shadowColor = 'transparent';
+                this.ctx.fillText('WWF', this.player.x + 10, this.player.y - 15);
 
                 // 粒子特效
                 this.particles.forEach(p => {
