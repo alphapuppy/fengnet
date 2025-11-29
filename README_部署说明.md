@@ -10,8 +10,8 @@
    - 或者在命令行中运行：`python start_server.py`
 
 3. 服务器启动后，会显示访问地址：
-   - **本地访问**：`http://localhost:8000/DOCTYPE.html`
-   - **局域网访问**：`http://你的IP地址:8000/DOCTYPE.html`
+   - **本地访问**：`http://localhost:8000/feng.html`
+   - **局域网访问**：`http://你的IP地址:8000/feng.html`
 
 4. 在同一局域网的其他设备（手机、平板等）可以通过局域网IP访问
 
@@ -32,7 +32,7 @@
    http-server -p 8000
    ```
 
-4. 访问：`http://localhost:8000/DOCTYPE.html`
+4. 访问：`http://localhost:8000/feng.html`
 
 ---
 

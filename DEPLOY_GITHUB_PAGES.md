@@ -72,12 +72,12 @@ git push -u origin main
 部署完成后，访问地址为：
 
 ```
-https://YOUR_USERNAME.github.io/YOUR_REPO_NAME/DOCTYPE.html
+https://YOUR_USERNAME.github.io/YOUR_REPO_NAME/feng.html
 ```
 
 例如：
 ```
-https://zhangsan.github.io/cyber-love-520/DOCTYPE.html
+https://zhangsan.github.io/cyber-love-520/feng.html
 ```
 
 ---
@@ -108,8 +108,8 @@ GitHub Pages 会自动重新部署（通常需要 1-2 分钟）。
 
 如果你想直接访问 `https://你的用户名.github.io/仓库名/` 就能玩游戏：
 
-1. 将 `DOCTYPE.html` 重命名为 `index.html`
-2. 或者保持现状，访问时加上 `/DOCTYPE.html`
+1. 将 `feng.html` 重命名为 `index.html`
+2. 或者保持现状，访问时加上 `/feng.html`
 
 ---
 
@@ -157,7 +157,7 @@ A:
 
 现在你的游戏已经部署到 GitHub Pages 了！
 
-访问地址：`https://你的用户名.github.io/仓库名/DOCTYPE.html`
+访问地址：`https://你的用户名.github.io/仓库名/feng.html`
 
 享受你的游戏吧！🎮✨
 

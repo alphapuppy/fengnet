@@ -12,7 +12,7 @@
 
 ## 🚀 在线游玩
 
-访问：https://你的用户名.github.io/仓库名/DOCTYPE.html
+访问：https://你的用户名.github.io/仓库名/feng.html
 
 ## 📦 本地运行
 
@@ -22,7 +22,7 @@
 python start_server.py
 ```
 
-然后访问：http://localhost:8000/DOCTYPE.html
+然后访问：http://localhost:8000/feng.html
 
 ### 方法二：Node.js
 
@@ -41,7 +41,7 @@ http-server -p 8000
 
 ## 📝 文件说明
 
-- `DOCTYPE.html` - 主游戏文件
+- `feng.html` - 主游戏文件
 - `feng3_PhotoGrid.png` - 玩家角色图片
 - `cyp1.png` - 终点城堡图片
 - `marry2.png` - 结婚场景图片

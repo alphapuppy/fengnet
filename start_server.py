@@ -36,16 +36,16 @@ with socketserver.TCPServer(("", PORT), Handler) as httpd:
     print("=" * 60)
     print("游戏服务器已启动！")
     print("=" * 60)
-    print(f"本地访问: http://localhost:{PORT}/DOCTYPE.html")
-    print(f"本地访问: http://127.0.0.1:{PORT}/DOCTYPE.html")
-    print(f"局域网访问: http://{local_ip}:{PORT}/DOCTYPE.html")
+    print(f"本地访问: http://localhost:{PORT}/feng.html")
+    print(f"本地访问: http://127.0.0.1:{PORT}/feng.html")
+    print(f"局域网访问: http://{local_ip}:{PORT}/feng.html")
     print("=" * 60)
     print("按 Ctrl+C 停止服务器")
     print("=" * 60)
     
     # 自动打开浏览器
     try:
-        webbrowser.open(f"http://localhost:{PORT}/DOCTYPE.html")
+        webbrowser.open(f"http://localhost:{PORT}/feng.html")
     except:
         pass
     
