@@ -433,9 +433,15 @@
                 
                 // 加载玩家图片
                 this.playerImage = new Image();
-                this.playerImage.src = 'feng3_PhotoGrid.png';
                 this.playerImageLoaded = false;
+                // 添加错误处理
+                this.playerImage.onerror = (e) => {
+                    console.error('玩家图片加载失败: feng3_PhotoGrid.png', e);
+                    console.error('当前路径:', window.location.href);
+                    this.playerImageLoaded = false;
+                };
                 this.playerImage.onload = () => {
+                    console.log('玩家图片加载成功，尺寸:', this.playerImage.width, 'x', this.playerImage.height);
                     this.playerImageLoaded = true;
                     // 根据图片实际尺寸调整玩家尺寸，缩小为原来的1/2
                     const aspectRatio = this.playerImage.width / this.playerImage.height;
@@ -452,6 +458,30 @@
                     // 重新设置玩家位置，确保在地面上
                     this.player.y = this.displayHeight - config.groundHeight - this.player.height;
                 };
+                // 设置图片源（在事件监听器之后设置，确保能捕获加载事件）
+                // 尝试多种路径，确保在不同环境下都能加载
+                const imagePaths = [
+                    'feng3_PhotoGrid.png',
+                    './feng3_PhotoGrid.png',
+                    window.location.pathname.replace(/\/[^\/]*$/, '/') + 'feng3_PhotoGrid.png'
+                ];
+                let currentPathIndex = 0;
+                const tryLoadImage = () => {
+                    if (currentPathIndex < imagePaths.length) {
+                        console.log('尝试加载图片:', imagePaths[currentPathIndex]);
+                        this.playerImage.src = imagePaths[currentPathIndex];
+                        currentPathIndex++;
+                    }
+                };
+                // 如果第一次加载失败，尝试其他路径
+                const originalOnError = this.playerImage.onerror;
+                this.playerImage.onerror = (e) => {
+                    originalOnError(e);
+                    if (currentPathIndex < imagePaths.length) {
+                        setTimeout(tryLoadImage, 100);
+                    }
+                };
+                tryLoadImage();
 
                 // 加载终点图片（替换原先的城堡 + 公主 emoji 整体效果）
                 this.princessImage = new Image();
@@ -990,63 +1020,67 @@
                 this.ctx.save();
                     
                     // 绘制玩家本体 - 使用图片
-                    if (this.playerImageLoaded) {
-                    // 计算绘制位置和尺寸
-                    let drawWidth = this.player.width;
-                    let drawHeight = this.player.isDucking ? this.player.height / 2 : this.player.height;
-                    let drawX = this.player.x;
-                    let drawY = this.player.isDucking ? 
-                        this.player.y + this.player.height / 2 : 
-                        this.player.y;
-                    // 再往下调一点：只上移少量像素（比之前更接近地面）
-                    drawY -= 3;
-                    
-                    // 绘制图片，直接绘制（假设图片本身已经朝右）
-                    // 如果图片朝左，取消下面注释，注释掉直接绘制的代码
-                    this.ctx.save();
-                    // 确保使用高质量图像平滑
-                    this.ctx.imageSmoothingEnabled = true;
-                    this.ctx.imageSmoothingQuality = 'high';
-                    // 确保使用默认合成模式，支持透明背景
-                    this.ctx.globalCompositeOperation = 'source-over';
-                    // 确保透明度为1，不遮挡背景
-                    this.ctx.globalAlpha = 1.0;
-                    
-                    // 方案1: 如果图片本身朝右，直接绘制（不翻转）
-                    // PNG图片的透明部分会自动显示背景
-                    this.ctx.drawImage(
-                        this.playerImage,
-                        drawX,
-                        drawY,
-                        drawWidth,
-                        drawHeight
-                    );
-                    
-                    // 方案2: 如果图片朝左需要翻转使其朝右，使用下面的代码（注释掉上面的直接绘制）
-                    // this.ctx.translate(drawX + drawWidth / 2, drawY);
-                    // this.ctx.scale(-1, 1); // 水平翻转，使图片朝右
-                    // this.ctx.drawImage(
-                    //     this.playerImage,
-                    //     -drawWidth / 2,
-                    //     0,
-                    //     drawWidth,
-                    //     drawHeight
-                    // );
-                    
-                    this.ctx.restore();
-                } else {
-                    // 如果图片还没加载完成，使用 emoji 作为后备
-                    this.ctx.translate(this.player.x + this.player.width / 2, this.player.y);
-                    this.ctx.scale(-1, 1); // 翻转 emoji
-                    
-                    let playerSprite = sprites.player;
-                    if (!this.player.isGrounded) playerSprite = sprites.playerJump;
-                    if (this.player.isDucking) playerSprite = sprites.playerDuck;
+                    // 检查图片是否已加载且有效
+                    if (this.playerImageLoaded && this.playerImage.complete && this.playerImage.naturalWidth > 0) {
+                        // 计算绘制位置和尺寸
+                        let drawWidth = this.player.width;
+                        let drawHeight = this.player.isDucking ? this.player.height / 2 : this.player.height;
+                        let drawX = this.player.x;
+                        let drawY = this.player.isDucking ? 
+                            this.player.y + this.player.height / 2 : 
+                            this.player.y;
+                        // 再往下调一点：只上移少量像素（比之前更接近地面）
+                        drawY -= 3;
+                        
+                        // 绘制图片，直接绘制（假设图片本身已经朝右）
+                        this.ctx.save();
+                        // 确保使用高质量图像平滑
+                        this.ctx.imageSmoothingEnabled = true;
+                        this.ctx.imageSmoothingQuality = 'high';
+                        // 确保使用默认合成模式，支持透明背景
+                        this.ctx.globalCompositeOperation = 'source-over';
+                        // 确保透明度为1，不遮挡背景
+                        this.ctx.globalAlpha = 1.0;
+                        
+                        // 绘制图片
+                        try {
+                            this.ctx.drawImage(
+                                this.playerImage,
+                                drawX,
+                                drawY,
+                                drawWidth,
+                                drawHeight
+                            );
+                        } catch (e) {
+                            console.error('绘制玩家图片失败:', e);
+                            // 如果绘制失败，使用 emoji 后备
+                            this.ctx.restore();
+                            this.ctx.translate(this.player.x + this.player.width / 2, this.player.y);
+                            this.ctx.scale(-1, 1);
+                            let playerSprite = sprites.player;
+                            if (!this.player.isGrounded) playerSprite = sprites.playerJump;
+                            if (this.player.isDucking) playerSprite = sprites.playerDuck;
+                            this.ctx.font = '55px Arial';
+                            let drawY = this.player.isDucking ? 60 : 50;
+                            this.ctx.fillText(playerSprite, -this.player.width / 2, drawY);
+                            this.ctx.restore();
+                        }
+                        
+                        this.ctx.restore();
+                    } else {
+                        // 如果图片还没加载完成，使用 emoji 作为后备
+                        this.ctx.translate(this.player.x + this.player.width / 2, this.player.y);
+                        this.ctx.scale(-1, 1); // 翻转 emoji
+                        
+                        let playerSprite = sprites.player;
+                        if (!this.player.isGrounded) playerSprite = sprites.playerJump;
+                        if (this.player.isDucking) playerSprite = sprites.playerDuck;
 
-                    this.ctx.font = '55px Arial';
-                    let drawY = this.player.isDucking ? 60 : 50;
-                    this.ctx.fillText(playerSprite, -this.player.width / 2, drawY);
-                }
+                        this.ctx.font = '55px Arial';
+                        let drawY = this.player.isDucking ? 60 : 50;
+                        this.ctx.fillText(playerSprite, -this.player.width / 2, drawY);
+                        this.ctx.restore();
+                    }
 
                 this.ctx.restore(); // 结束玩家绘制
 
